@@ -1,22 +1,18 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,12 +23,12 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
+    // Hide splash once fonts are ready. Keeps initial paint clean.
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -42,18 +38,42 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return <RootLayoutTabs />;
 }
 
-function RootLayoutNav() {
+function RootLayoutTabs() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    // Provide safe-area metrics (status bar / notch) to the app
+    <SafeAreaProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {/* Tabs are our root navigator */}
+        <Tabs
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          // Simple icons for the two visible tabs
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === 'index') {
+              return <FontAwesome name="home" color={color} size={size} />;
+            }
+            if (route.name === 'profile') {
+              return <FontAwesome name="user" color={color} size={size} />;
+            }
+            return null;
+          },
+        })}
+        >
+          {/*
+            Only `index` and `profile` are navigable.
+            The "+html" and "+not-found" routes are internal and hidden from the tab bar.
+          */}
+          <Tabs.Screen name="index" options={{ title: 'Home' }} />
+          <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+          <Tabs.Screen name="+not-found" options={{ href: null }} />
+        </Tabs>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

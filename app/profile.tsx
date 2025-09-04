@@ -1,0 +1,22 @@
+import { StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function ProfileScreen() {
+  return (
+    // Keep layout clear of status bar on iOS
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      {/* Placeholder until a real profile is built */}
+      <Text>Profile Screen</Text>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+

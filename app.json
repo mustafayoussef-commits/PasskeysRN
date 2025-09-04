@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ExpoRouterTabsApp2",
-    "slug": "ExpoRouterTabsApp2",
+    "name": "PasskeysRN",
+    "slug": "passkeysrn",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "exporoutertabsapp2",
+    "scheme": "passkeysrn",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
